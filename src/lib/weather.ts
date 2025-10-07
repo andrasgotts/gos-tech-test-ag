@@ -45,7 +45,9 @@ export async function fetchYorkWeather(): Promise<WeatherViewModel> {
   const windMph = kmhToMph(windKmh);
   const gustMph = kmhToMph(data.hourly.wind_gusts_10m[idx]);
   const code = data.hourly.weather_code[idx];
+  //const code:number = 1;//test weather code
   let summary: string;
+  
   if (!code) {
     summary = "Clear sky";
   } else if (code === 1) {
@@ -105,17 +107,17 @@ export async function fetchYorkWeather(): Promise<WeatherViewModel> {
   }
 
   return {
-    location: "York, UK",
-    observedAt: new Date(data.hourly.time[idx]).toLocaleString(),
-    summary,
-    temperatureF: Number(f.toFixed(1)),
-    windSpeedMph: Number(windMph.toFixed(1)),
-    windDirection: data.hourly.wind_direction_10m[idx],
-    apparentC: data.hourly.apparent_temperature[idx],
-    humidity: data.hourly.relative_humidity_2m[idx],
+    location: "York, UK",//
+    observedAt: new Date(data.hourly.time[idx]).toLocaleString(),//
+    summary,//
+    temperatureF: Number(f.toFixed(1)),//
+    windSpeedMph: Number(windMph.toFixed(1)),//
+    windDirection: data.hourly.wind_direction_10m[idx],//
+    apparentC: data.hourly.apparent_temperature[idx],//
+    humidity: data.hourly.relative_humidity_2m[idx],//
     gustMph: Number(gustMph.toFixed(1)),
-    precipitationMm: data.hourly.precipitation[idx],
-    cloudCoverPct: data.hourly.cloud_cover[idx],
+    precipitationMm: data.hourly.precipitation[idx],//
+    cloudCoverPct: data.hourly.cloud_cover[idx],//
     surfacePressureHpa: data.hourly.surface_pressure[idx],
     sunrise: new Date(data.daily.sunrise?.[0]).toLocaleString(),
     sunset: new Date(data.daily.sunset?.[0]).toLocaleString(),

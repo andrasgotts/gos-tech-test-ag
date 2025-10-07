@@ -21,7 +21,7 @@ export default async function Home() {
           >
             Weather — {weather.location}
           </h1>
-          <p className="mt-1 text-sm text-green-800">
+          <p className="mt-1 text-sm text-white">
             Observed: {weather.observedAt}
           </p>
         </header>
