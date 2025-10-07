@@ -36,7 +36,7 @@ export default async function Home() {
               className="text-4xl font-bold"
               style={{ color: "var(--accent)" }}
             >
-              {weather.temperatureF}°F
+              {weather.temperatureF}°F{/*FARRENHEIT??*/}
             </p>
             <p className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>
               {weather.summary}
@@ -73,7 +73,7 @@ export default async function Home() {
             <h2 className="text-xl font-medium mb-2 text-white">At a glance</h2>
             <ul className="space-y-1 text-sm">
               <li style={{ color: "var(--foreground)" }}>
-                Apparent: {Math.round(weather.apparentC)}°C
+                Apparent: {Math.round(weather.apparentC)}°C{/*CELCIUS??*/}
               </li>
               <li style={{ color: "var(--foreground)" }}>
                 Humidity: {Math.round(weather.humidity)}%
