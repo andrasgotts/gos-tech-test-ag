@@ -60,6 +60,14 @@ export type WeatherApiResponse = {
 };
 
 export type WeatherViewModel = {
+  time: string; // ISO8601 local date strings
+  temperature_2m_max: number; // °C
+  temperature_2m_min: number; // °C
+  precipitation_sum: number; // mm
+  wind_speed_10m_max: number; // km/h
+  wind_gusts_10m_max: number; // km/h
+  wind_direction_10m_dominant: number; // °
+  //
   location: string;
   observedAt: string; // ISO8601 local time string (selected hour)
   summary: string; // mapped from weather code
@@ -76,3 +84,25 @@ export type WeatherViewModel = {
   sunset?: string;
   uvIndexMax?: number;
 };
+//https://app.quicktype.io/#l=ts
+export type Welcome = {
+    day:   Day;
+    night: Day;
+}
+
+export type Day = {
+    description: string;
+    image:       string;
+}
+
+// Converts JSON strings to/from your types
+export class Convert {
+    public static toWelcome(json: string): { [key: string]: Welcome } {
+        return JSON.parse(json);
+    }
+
+    public static welcomeToJson(value: { [key: string]: Welcome }): string {
+        return JSON.stringify(value);
+    }
+}
+

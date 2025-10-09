@@ -120,6 +120,83 @@ export default async function Home() {
             </p>
           </div>
         </section>
+
+        {/* third row with daily info if present */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">Time</h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.time ?? "—"}
+            </p>
+          </div>
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">temperature_2m_max</h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.temperature_2m_max ?? "—"}
+            </p>
+          </div>
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">
+              temperature_2m_min
+            </h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.temperature_2m_min ?? "—"}
+            </p>
+          </div>
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">
+              precipitation_sum
+            </h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.precipitation_sum ?? "—"}
+            </p>
+          </div>
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">
+              wind_speed_10m_max
+            </h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.wind_speed_10m_max ?? "—"}
+            </p>
+          </div>
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">
+              wind_gusts_10m_max
+            </h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.wind_gusts_10m_max ?? "—"}
+            </p>
+          </div>
+          <div
+            className="rounded-xl shadow-xl shadow-green-950/25 border p-5"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}
+          >
+            <h3 className="text-lg font-semibold mb-2 text-white">
+              wind_direction_10m_dominant
+            </h3>
+            <p className="text-base" style={{ color: "var(--foreground)" }}>
+              {weather.wind_direction_10m_dominant ?? "—"}
+            </p>
+          </div>
+        </section>
       </div>
     </main>
   );
