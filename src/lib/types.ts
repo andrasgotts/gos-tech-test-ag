@@ -76,6 +76,7 @@ export type WeatherViewModel = {
   temperatureF: number; // Fahrenheit
   windSpeedMph: number; // mph
   windDirection: number; // °
+  temperature_2m: number; // °C
   apparentC: number;
   humidity: number;
   gustMph: number;

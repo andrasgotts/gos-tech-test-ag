@@ -48,10 +48,11 @@ async function parsing(data:WeatherApiResponse):Promise<[string, string, number]
   const file = await fs.readFile(process.cwd() + '/src/lib/WMO.JSON', 'utf8');
   const idx = Math.min(12, data.hourly.time.length - 1);
   const code = Convert.toWelcome(file);
-  const sunrise:string = data.daily.sunrise[0];
-  const sunset:string = data.daily.sunset[0];
-  const time:string = data.hourly.time[idx];
-  console.log("Sunrise,sunset,time"+sunrise,sunset,time);
+  
+  const sunrise:Date = new Date(data.daily.sunrise?.[0]);
+  const sunset:Date = new Date(data.daily.sunset?.[0]);
+  const time:Date = new Date(data.hourly.time[idx]);
+  console.log("Sunrise,sunset,time : | "+sunrise+" | "+sunset+" | "+time);
   const codedesc:string = code[data.hourly.weather_code[idx]].day.description;
   const codeimg:string = code[data.hourly.weather_code[idx]].day.image;
   return [codedesc, codeimg, idx];
@@ -90,6 +91,7 @@ async function view_model_shaping(data:WeatherApiResponse,parsed:Promise<[string
     temperatureF: Number(uc[1].toFixed(1)),//
     windSpeedMph: Number(uc[3].toFixed(1)),//
     windDirection: data.hourly.wind_direction_10m[p[2]],//
+    temperature_2m: data.hourly.temperature_2m[p[2]],
     apparentC: data.hourly.apparent_temperature[p[2]],//
     humidity: data.hourly.relative_humidity_2m[p[2]],//
     gustMph: Number(uc[4].toFixed(1)),

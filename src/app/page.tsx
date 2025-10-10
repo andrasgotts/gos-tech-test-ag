@@ -40,11 +40,19 @@ export default async function Home() {
             </p>
             <p className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>
               {weather.summary}
+              <Image
+          src={weather.summaryimg}
+          alt="Weather Summary Image"
+          width={48}
+          height={48}
+          className="h-12 w-auto mb-4"
+          priority
+        />
               {/*
               <Image
           src={weather.summaryimg}
           alt="Weather Summary Image"
-          width={160}
+          width={48}
           height={48}
           className="h-12 w-auto mb-4"
           priority
@@ -84,7 +92,10 @@ export default async function Home() {
             <h2 className="text-xl font-medium mb-2 text-white">At a glance</h2>
             <ul className="space-y-1 text-sm">
               <li style={{ color: "var(--foreground)" }}>
-                Apparent: {Math.round(weather.apparentC)}°C{/*CELCIUS??*/}
+                Apparent: {Math.round(weather.apparentC)}°C
+              </li>
+              <li style={{ color: "var(--foreground)" }}>
+                Temperature 2m: {Math.round(weather.temperature_2m)}°C
               </li>
               <li style={{ color: "var(--foreground)" }}>
                 Humidity: {Math.round(weather.humidity)}%
@@ -127,7 +138,7 @@ export default async function Home() {
               UV Index (max)
             </h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.uvIndexMax ?? "—"}
+              {weather.uvIndexMax ?? "—"} index
             </p>
           </div>
         </section>
@@ -149,7 +160,7 @@ export default async function Home() {
           >
             <h3 className="text-lg font-semibold mb-2 text-white">temperature_2m_max</h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.temperature_2m_max ?? "—"}
+              {weather.temperature_2m_max ?? "—"} °C
             </p>
           </div>
           <div
@@ -160,7 +171,7 @@ export default async function Home() {
               temperature_2m_min
             </h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.temperature_2m_min ?? "—"}
+              {weather.temperature_2m_min ?? "—"} °C
             </p>
           </div>
           <div
@@ -171,7 +182,7 @@ export default async function Home() {
               precipitation_sum
             </h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.precipitation_sum ?? "—"}
+              {weather.precipitation_sum ?? "—"} mm
             </p>
           </div>
           <div
@@ -182,7 +193,7 @@ export default async function Home() {
               wind_speed_10m_max
             </h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.wind_speed_10m_max ?? "—"}
+              {weather.wind_speed_10m_max ?? "—"} km/h
             </p>
           </div>
           <div
@@ -193,7 +204,7 @@ export default async function Home() {
               wind_gusts_10m_max
             </h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.wind_gusts_10m_max ?? "—"}
+              {weather.wind_gusts_10m_max ?? "—"} km/h
             </p>
           </div>
           <div
@@ -204,7 +215,7 @@ export default async function Home() {
               wind_direction_10m_dominant
             </h3>
             <p className="text-base" style={{ color: "var(--foreground)" }}>
-              {weather.wind_direction_10m_dominant ?? "—"}
+              {weather.wind_direction_10m_dominant ?? "—"} °
             </p>
           </div>
         </section>
