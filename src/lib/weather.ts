@@ -23,8 +23,8 @@ async function request_construction() {
 
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   // York, UK coordinates
-  url.searchParams.set("latitude", String(28.01520));
-  url.searchParams.set("longitude", String(-3.91051));
+  url.searchParams.set("latitude", String(53.958332));
+  url.searchParams.set("longitude", String(-1.080278));
   url.searchParams.set("timezone", timezone);
   url.searchParams.set("hourly", hourly);
   url.searchParams.set("daily", daily);
@@ -48,6 +48,10 @@ async function parsing(data:WeatherApiResponse):Promise<[string, string, number]
   const file = await fs.readFile(process.cwd() + '/src/lib/WMO.JSON', 'utf8');
   const idx = Math.min(12, data.hourly.time.length - 1);
   const code = Convert.toWelcome(file);
+  const sunrise:string = data.daily.sunrise[0];
+  const sunset:string = data.daily.sunset[0];
+  const time:string = data.hourly.time[idx];
+  console.log("Sunrise,sunset,time"+sunrise,sunset,time);
   const codedesc:string = code[data.hourly.weather_code[idx]].day.description;
   const codeimg:string = code[data.hourly.weather_code[idx]].day.image;
   return [codedesc, codeimg, idx];
@@ -56,8 +60,10 @@ async function parsing(data:WeatherApiResponse):Promise<[string, string, number]
 async function unit_conversions(data:WeatherApiResponse):Promise<number[]>{
   const idx = Math.min(12, data.hourly.time.length - 1);
 
-  const c = data.hourly.temperature_2m[idx];
+  const c = data.hourly.apparent_temperature[idx];//2m/apparent
+  const v = data.hourly.temperature_2m[idx];
   const f = toFahrenheit(c);
+  console.log("c appa, c 2m,f"+c,v,f);
   const windKmh = data.hourly.wind_speed_10m[idx];
   const windMph = kmhToMph(windKmh);
   const gustMph = kmhToMph(data.hourly.wind_gusts_10m[idx]);
