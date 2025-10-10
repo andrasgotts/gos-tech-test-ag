@@ -44,127 +44,29 @@ async function data_fetch(res:Response){
   return data;
 }
 
-async function parsing(data:WeatherApiResponse){
+async function parsing(data:WeatherApiResponse):Promise<[string, string, number]>{
   const file = await fs.readFile(process.cwd() + '/src/lib/WMO.JSON', 'utf8');
   const idx = Math.min(12, data.hourly.time.length - 1);
   const code = Convert.toWelcome(file);
   const codedesc:string = code[data.hourly.weather_code[idx]].day.description;
-  return codedesc;
+  const codeimg:string = code[data.hourly.weather_code[idx]].day.image;
+  return [codedesc, codeimg, idx];
 }
 
-function mapping(){
-  
-}
-
-function unit_conversions(data:WeatherApiResponse, c:number, f:number){
-  const idx = Math.min(12, data.hourly.time.length - 1);
-
-  //const c = data.hourly.temperature_2m[idx];
-  //const f = toFahrenheit(c); // Intentional bug here
-  const windKmh = data.hourly.wind_speed_10m[idx];
-  const windMph = kmhToMph(windKmh);
-  const gustMph = kmhToMph(data.hourly.wind_gusts_10m[idx]);
-  const code = data.hourly.weather_code[idx];
-      
-}
-/** 
-function view_model_shaping(){
-  const view_model:WeatherViewModel = {location: "York, UK",//
-    observedAt: new Date(data.hourly.time[idx]).toLocaleString(),//
-    summary,//
-    temperatureF: Number(f.toFixed(1)),//
-    windSpeedMph: Number(windMph.toFixed(1)),//
-    windDirection: data.hourly.wind_direction_10m[idx],//
-    apparentC: data.hourly.apparent_temperature[idx],//
-    humidity: data.hourly.relative_humidity_2m[idx],//
-    gustMph: Number(gustMph.toFixed(1)),
-    precipitationMm: data.hourly.precipitation[idx],//
-    cloudCoverPct: data.hourly.cloud_cover[idx],//
-    surfacePressureHpa: data.hourly.surface_pressure[idx],
-    sunrise: new Date(data.daily.sunrise?.[0]).toLocaleString(),
-    sunset: new Date(data.daily.sunset?.[0]).toLocaleString(),
-    uvIndexMax: data.daily.uv_index_max?.[0],}
-  return view_model;
-}*/
-
-export async function fetchYorkWeather(): Promise<WeatherViewModel> {
-  const res = await request_construction();
-  const data = await data_fetch(res);
-  const parsed = parsing(data);
-  //const data = (await res.json()) as WeatherApiResponse;
-
-  // Select the hour nearest to "now" by matching current local hour string (HH:00)
-  // For simplicity and determinism in this assessment, we'll select index 12 (around midday).
+async function unit_conversions(data:WeatherApiResponse):Promise<number[]>{
   const idx = Math.min(12, data.hourly.time.length - 1);
 
   const c = data.hourly.temperature_2m[idx];
-  const f = toFahrenheit(c); // Intentional bug here
+  const f = toFahrenheit(c);
   const windKmh = data.hourly.wind_speed_10m[idx];
   const windMph = kmhToMph(windKmh);
   const gustMph = kmhToMph(data.hourly.wind_gusts_10m[idx]);
-  //const code = data.hourly.weather_code[idx];
-  const code_unit = data.hourly_units.weather_code;
-  const code:number = 96;//test weather code
-  let summary: string;
-  
-  if (!code) {
-    summary = "Clear sky";
-  } else if (code === 1) {
-    summary = "Mainly clear";
-  } else if (code === 2) {
-    summary = "Partly cloudy";
-  } else if (code === 3) {
-    summary = "Overcast";
-  } else if (code === 45) {
-    summary = "Fog";
-  } else if (code === 48) {
-    summary = "Depositing rime fog";
-  } else if (code === 51) {
-    summary = "Light drizzle";
-  } else if (code === 53) {
-    summary = "Moderate drizzle";
-  } else if (code === 55) {
-    summary = "Dense drizzle";
-  } else if (code === 56) {
-    summary = "Light freezing drizzle";
-  } else if (code === 57) {
-    summary = "Dense freezing drizzle";
-  } else if (code === 61) {
-    summary = "Slight rain";
-  } else if (code === 63) {
-    summary = "Moderate rain";
-  } else if (code === 65) {
-    summary = "Heavy rain";
-  } else if (code === 66) {
-    summary = "Light freezing rain";
-  } else if (code === 67) {
-    summary = "Heavy freezing rain";
-  } else if (code === 71) {
-    summary = "Slight snowfall";
-  } else if (code === 73) {
-    summary = "Moderate snowfall";
-  } else if (code === 75) {
-    summary = "Heavy snowfall";
-  } else if (code === 80) {
-    summary = "Rain showers";
-  } else if (code === 81) {
-    summary = "Moderate rain showers";
-  } else if (code === 82) {
-    summary = "Violent rain showers";
-  } else if (code === 85) {
-    summary = "Slight snow showers";
-  } else if (code === 86) {
-    summary = "Heavy snow showers";
-  } else if (code === 95) {
-    summary = "Thunderstorm";
-  } else if (code === 96) {
-    summary = "Thunderstorm with slight hail";
-  } else if (code === 99) {
-    summary = "Thunderstorm with heavy hail";
-  } else {
-    summary = `Code ${code}`;
-  }
-  summary = (await parsed).toString();
+  return [c,f,windKmh,windMph,gustMph];
+}
+
+async function view_model_shaping(data:WeatherApiResponse,parsed:Promise<[string, string, number]>,u_c:Promise<number[]>){
+  const p = (await parsed);
+  const uc = (await u_c);
   return {
     time: new Date(data.daily.time?.[0]).toLocaleString(), // ISO8601 local date strings
     temperature_2m_max: data.daily.temperature_2m_max[0], // °C
@@ -173,22 +75,33 @@ export async function fetchYorkWeather(): Promise<WeatherViewModel> {
     wind_speed_10m_max: data.daily.wind_speed_10m_max[0], // km/h
     wind_gusts_10m_max: data.daily.wind_speed_10m_max[0], // km/h
     wind_direction_10m_dominant: data.daily.wind_direction_10m_dominant[0], // °
-
+    //
+    summaryimg:p[1],
   //
     location: "York, UK",//
-    observedAt: new Date(data.hourly.time[idx]).toLocaleString(),//
-    summary,//
-    temperatureF: Number(f.toFixed(1)),//
-    windSpeedMph: Number(windMph.toFixed(1)),//
-    windDirection: data.hourly.wind_direction_10m[idx],//
-    apparentC: data.hourly.apparent_temperature[idx],//
-    humidity: data.hourly.relative_humidity_2m[idx],//
-    gustMph: Number(gustMph.toFixed(1)),
-    precipitationMm: data.hourly.precipitation[idx],//
-    cloudCoverPct: data.hourly.cloud_cover[idx],//
-    surfacePressureHpa: data.hourly.surface_pressure[idx],
+    observedAt: new Date(data.hourly.time[p[2]]).toLocaleString(),//
+    summary:p[0],//
+    temperatureF: Number(uc[1].toFixed(1)),//
+    windSpeedMph: Number(uc[3].toFixed(1)),//
+    windDirection: data.hourly.wind_direction_10m[p[2]],//
+    apparentC: data.hourly.apparent_temperature[p[2]],//
+    humidity: data.hourly.relative_humidity_2m[p[2]],//
+    gustMph: Number(uc[4].toFixed(1)),
+    precipitationMm: data.hourly.precipitation[p[2]],//
+    cloudCoverPct: data.hourly.cloud_cover[p[2]],//
+    surfacePressureHpa: data.hourly.surface_pressure[p[2]],
     sunrise: new Date(data.daily.sunrise?.[0]).toLocaleString(),
     sunset: new Date(data.daily.sunset?.[0]).toLocaleString(),
     uvIndexMax: data.daily.uv_index_max?.[0],
   };
+}
+
+export async function fetchYorkWeather(): Promise<WeatherViewModel> {
+  const res = await request_construction();
+  const data = await data_fetch(res);
+  const parsed = parsing(data);
+  const uc = unit_conversions(data);
+  let WVM= {} as Promise<WeatherViewModel>;
+  WVM = view_model_shaping(data,parsed,uc)
+  return WVM;
 }

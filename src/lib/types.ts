@@ -68,6 +68,8 @@ export type WeatherViewModel = {
   wind_gusts_10m_max: number; // km/h
   wind_direction_10m_dominant: number; // °
   //
+  summaryimg: string; // °
+  //
   location: string;
   observedAt: string; // ISO8601 local time string (selected hour)
   summary: string; // mapped from weather code

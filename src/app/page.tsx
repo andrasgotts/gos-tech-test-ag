@@ -40,6 +40,14 @@ export default async function Home() {
             </p>
             <p className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>
               {weather.summary}
+              <Image
+          src={weather.summaryimg}
+          alt="Weather Summary Image"
+          width={160}
+          height={48}
+          className="h-12 w-auto mb-4"
+          priority
+        />
             </p>
           </div>
 
