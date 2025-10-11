@@ -36,9 +36,15 @@ export default async function Home() {
               className="text-4xl font-bold"
               style={{ color: "var(--accent)" }}
             >
-              {weather.temperatureF}°F{/*FARRENHEIT??*/}
+              {Math.round(weather.temperature_2m)}°C{/**Temperature 2m */}
             </p>
-            <p className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>
+            <p
+              className="text-xs font-medium pt-2"
+              style={{ color: "var(--accent)" }}
+            >
+              What temperature feels like: {Math.round(weather.apparentC)}°C{/**Apparent */}
+            </p>
+            <p className="mt-1 text-sm pt-4" style={{ color: "var(--foreground)" }}>
               {weather.summary}
               <Image
           src={weather.summaryimg}
@@ -92,10 +98,7 @@ export default async function Home() {
             <h2 className="text-xl font-medium mb-2 text-white">At a glance</h2>
             <ul className="space-y-1 text-sm">
               <li style={{ color: "var(--foreground)" }}>
-                Apparent: {Math.round(weather.apparentC)}°C
-              </li>
-              <li style={{ color: "var(--foreground)" }}>
-                Temperature 2m: {Math.round(weather.temperature_2m)}°C
+                {weather.temperatureF}°F{/*FARRENHEIT??*/}
               </li>
               <li style={{ color: "var(--foreground)" }}>
                 Humidity: {Math.round(weather.humidity)}%
