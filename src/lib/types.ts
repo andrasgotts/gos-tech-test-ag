@@ -88,7 +88,7 @@ export type WeatherViewModel = {
   uvIndexMax?: number;
 };
 //https://app.quicktype.io/#l=ts
-export type Welcome = {
+export type DayOrNight = {
     day:   Day;
     night: Day;
 }
@@ -100,11 +100,11 @@ export type Day = {
 
 // Converts JSON strings to/from your types
 export class Convert {
-    public static toWelcome(json: string): { [key: string]: Welcome } {
+    public static toDayOrNight(json: string): { [key: string]: DayOrNight } {
         return JSON.parse(json);
     }
 
-    public static welcomeToJson(value: { [key: string]: Welcome }): string {
+    public static DayOrNightToJson(value: { [key: string]: DayOrNight }): string {
         return JSON.stringify(value);
     }
 }

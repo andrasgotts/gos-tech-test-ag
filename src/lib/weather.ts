@@ -2,7 +2,7 @@
 // NOTE: This module intentionally contains an overly complex function and a subtle logic bug
 // to be used in a junior engineering technical assessment.
 
-import { WeatherApiResponse, WeatherViewModel, Convert } from "./types";
+import { WeatherApiResponse, WeatherViewModel, Convert, DayOrNight } from "./types";
 import { promises as fs } from 'fs';
 
 function toFahrenheit(celsius: number): number {
@@ -40,22 +40,43 @@ async function request_construction() {
 
 async function data_fetch(res:Response){
   //const data:WeatherApiResponse = res.json();
-  const data = (await res.json()) as WeatherApiResponse;
+  const data = await res;
   return data;
 }
 
-async function parsing(data:WeatherApiResponse):Promise<[string, string, number]>{
+async function parsing(_data:Response,):Promise<[WeatherApiResponse, {[key:string]:DayOrNight}]>{
   const file = await fs.readFile(process.cwd() + '/src/lib/WMO.JSON', 'utf8');
+  const data = (await _data.json()) as WeatherApiResponse;
+  const code = Convert.toDayOrNight(file);
+  return [data,code]
+}
+
+async function selection (data:WeatherApiResponse,code:{[key:string]:DayOrNight}):Promise<[string, string, number]> {
   const idx = Math.min(12, data.hourly.time.length - 1);
-  const code = Convert.toWelcome(file);
+  const sunrise:number = new Date(data.daily.sunrise?.[0]).getTime();
+  const sunset:number = new Date(data.daily.sunset?.[0]).getTime();
+  const time:number = new Date(data.hourly.time[idx]).getTime();
+  const risevstime:number = sunrise-time;
+  const setvstime:number = sunset-time;
+  let codedesc:string;
+  let codeimg:string;
+  if (risevstime < 0 && setvstime > 0){
+    //night
+    codedesc = code[data.hourly.weather_code[idx]].night.description;
+    codeimg = code[data.hourly.weather_code[idx]].night.image;
+  }
+  else {
+    //day
+    codedesc = code[data.hourly.weather_code[idx]].day.description;
+    codeimg = code[data.hourly.weather_code[idx]].day.image;
+  }
+  console.log("Sunrise,sunset,time,sr-t,ss-t : | "+sunrise+" | "+sunset+" | "+time+" | "+risevstime+" | "+setvstime);
   
-  const sunrise:Date = new Date(data.daily.sunrise?.[0]);
-  const sunset:Date = new Date(data.daily.sunset?.[0]);
-  const time:Date = new Date(data.hourly.time[idx]);
-  console.log("Sunrise,sunset,time : | "+sunrise+" | "+sunset+" | "+time);
-  const codedesc:string = code[data.hourly.weather_code[idx]].day.description;
-  const codeimg:string = code[data.hourly.weather_code[idx]].day.image;
   return [codedesc, codeimg, idx];
+}
+
+async function mapping () {
+  
 }
 
 async function unit_conversions(data:WeatherApiResponse):Promise<number[]>{
@@ -71,8 +92,8 @@ async function unit_conversions(data:WeatherApiResponse):Promise<number[]>{
   return [c,f,windKmh,windMph,gustMph];
 }
 
-async function view_model_shaping(data:WeatherApiResponse,parsed:Promise<[string, string, number]>,u_c:Promise<number[]>){
-  const p = (await parsed);
+async function view_model_shaping(data:WeatherApiResponse,selected:[string, string, number],u_c:number[]){
+  const p = selected;
   const uc = (await u_c);
   return {
     time: new Date(data.daily.time?.[0]).toLocaleString(), // ISO8601 local date strings
@@ -107,9 +128,10 @@ async function view_model_shaping(data:WeatherApiResponse,parsed:Promise<[string
 export async function fetchYorkWeather(): Promise<WeatherViewModel> {
   const res = await request_construction();
   const data = await data_fetch(res);
-  const parsed = parsing(data);
-  const uc = unit_conversions(data);
+  const parsed = await parsing(data);
+  const selected = await selection(parsed[0],parsed[1]);
+  const uc = await unit_conversions(parsed[0]);
   let WVM= {} as Promise<WeatherViewModel>;
-  WVM = view_model_shaping(data,parsed,uc)
+  WVM = view_model_shaping(parsed[0],selected,uc);
   return WVM;
 }
